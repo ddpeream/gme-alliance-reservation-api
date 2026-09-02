@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from './config/database.config';
-// import { ResourcesModule } from './modules/resources/resources.module';
-// import { UsersModule } from './modules/users/users.module';
-// import { ReservationsModule } from './modules/reservations/reservations.module';
+import { ResourcesModule } from './modules/resources/resources.module';
+import { UsersModule } from './modules/users/users.module';
+import { ReservationsModule } from './modules/reservations/reservations.module';
 
 @Module({
   imports: [
@@ -27,9 +27,9 @@ import { databaseConfig } from './config/database.config';
       }),
       inject: [ConfigService],
     }),
-    // ResourcesModule,
-    // UsersModule,
-    // ReservationsModule,
+    ResourcesModule,
+    UsersModule,
+    ReservationsModule,
   ],
 })
 export class AppModule {}
