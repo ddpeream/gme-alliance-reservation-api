@@ -75,5 +75,5 @@ Thumbs.db
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
+!.vscode/launch.json34
 !.vscode/extensions.json
