@@ -1,98 +1,177 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# GME Alliance Reservation API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST desarrollada con **NestJS** y **TypeORM** para la gestión de reservas de recursos (como salas de conferencias). El sistema permite la gestión de usuarios, la creación de recursos, la reserva de dichos recursos en rangos de tiempo específicos y la validación de conflictos de horarios.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📑 Tabla de Contenidos
+- [Características Principales](#características-principales)
+- [Stack Tecnológico](#stack-tecnológico)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [🚀 Requisitos Previos](#-requisitos-previos)
+- [⚙️ Instalación y Ejecución](#️-instalación-y-ejecución)
+- [🔄 Flujo de Trabajo (Workflow)](#-flujo-de-trabajo-workflow)
+- [🔗 Endpoints Principales](#-endpoints-principales)
+- [🧪 Testing](#-testing)
+- [⚠️ Manejo de Errores y Conflictos](#️-manejo-de-errores-y-conflictos)
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## ✨ Características Principales
+- **Gestión de Usuarios:** Creación de usuarios con `id` UUID, `email` único y `name`.
+- **Gestión de Recursos:** Creación de recursos físicos (ej. salas) con `name`, `type`, `capacity` y estado `isActive`.
+- **Sistema de Reservas:** 
+  - Creación de reservas con estado inicial `pending`.
+  - Confirmación de reservas cambiando el estado a `confirmed`.
+  - Validación de disponibilidad para evitar solapamientos de horarios (conflictos 409).
+  - Consulta de disponibilidad de un recurso en un rango de fechas específico.
+- **Filtrado y Paginación:** Búsqueda de reservas filtradas por `resourceId` y `status`, con soporte de paginación (`page`, `limit`).
 
-## Project setup
+---
 
-```bash
-$ npm install
-```
+## 🛠 Stack Tecnológico
+- **Lenguaje:** TypeScript
+- **Framework:** NestJS (Node.js)
+- **ORM:** TypeORM
+- **Base de Datos:** PostgreSQL (o SQLite para pruebas)
+- **Testing:** Jest + Supertest
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## 📂 Estructura del Proyecto
 
-# watch mode
-$ npm run start:dev
+src/
+├── config/
+├── database/
+├── modules/
+│   ├── reservations/
+│   │   ├── dto/
+│   │   ├── entities/
+│   │   ├── reservations.controller.ts
+│   │   ├── reservations.module.ts
+│   │   └── reservations.service.ts
+│   ├── resources/
+│   │   ├── dto/
+│   │   ├── entities/
+│   │   ├── resources.controller.ts
+│   │   ├── resources.module.ts
+│   │   └── resources.service.ts
+│   └── users/
+│       ├── dto/
+│       ├── entities/
+│       ├── users.controller.ts
+│       ├── users.module.ts
+│       └── users.service.ts
+├── app.controller.ts
+├── app.module.ts
+└── main.ts
 
-# production mode
-$ npm run start:prod
-```
+test/
+├── setup-e2e.ts
+└── utils/
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ npm run test
+## 🚀 Requisitos Previos
+- Node.js (v18 o superior)
+- npm o yarn
+- Docker (Opcional, si se usa docker-compose.yml para la BD)
 
-# e2e tests
-$ npm run test:e2e
+---
 
-# test coverage
-$ npm run test:cov
-```
+## ⚙️ Instalación y Ejecución
 
-## Deployment
+1. **Clonar el repositorio e instalar dependencias:**
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+   git clone <url-del-repositorio>
+   cd gme-alliance-reservation-api
+   npm install
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+2. **Configurar variables de entorno:** Crea un archivo `.env` en la raíz basado en `.env.example` y configura la conexión a tu base de datos.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+3. **Levantar la base de datos (Opcional, vía Docker):**
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+   docker-compose up -d
 
-## Resources
+4. **Ejecutar la aplicación en modo desarrollo:**
 
-Check out a few resources that may come in handy when working with NestJS:
+   npm run start:dev
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+   La API estará disponible en http://localhost:3000.
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 🔄 Flujo de Trabajo (Workflow)
+El flujo estándar para crear una reserva exitosa es el siguiente:
 
-## Stay in touch
+1. **Crear un Usuario:** `POST /users` (Obtienes un `userId`).
+2. **Crear un Recurso:** `POST /resources` (Obtienes un `resourceId`).
+3. **Crear una Reserva:** `POST /reservations` (Estado inicial: `pending`).
+4. **Confirmar la Reserva:** `PUT /reservations/:id` (Cambia el estado a `confirmed`).
+5. **Verificar Disponibilidad:** `GET /reservations/:resourceId/availability` (Comprueba si está libre).
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## 🔗 Endpoints Principales
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Método | Endpoint | Descripción | Códigos de Éxito | Códigos de Error |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/users` | Crea un nuevo usuario. | `201 Created` | `400` (Validación) |
+| `POST` | `/resources` | Crea un nuevo recurso (sala, etc.). | `201 Created` | `400` (Validación) |
+| `POST` | `/reservations` | Crea una reserva (estado `pending`). | `201 Created` | `400`, `409 Conflict` |
+| `PUT` | `/reservations/:id` | Actualiza el estado de una reserva (ej. `confirmed`). | `200 OK` | `404`, `409` |
+| `GET` | `/reservations` | Lista reservas (soporta filtros y paginación). | `200 OK` | - |
+| `GET` | `/reservations/:resourceId/availability` | Verifica disponibilidad de un recurso. | `200 OK` | `400` |
+
+---
+
+## 🧪 Testing
+
+El proyecto incluye una estrategia completa de pruebas que cubren la lógica de negocio aislada (unitarias) y el flujo HTTP completo con la base de datos (E2E/Integración).
+
+### Pruebas Unitarias
+Validan la lógica de los servicios y controladores de forma aislada, utilizando **mocks** de los repositorios.
+
+   npm run test
+
+### Pruebas E2E / Integración
+Validan los endpoints reales levantando la aplicación completa, conectando a una base de datos de prueba (con `synchronize: true` para crear las tablas automáticamente) y verificando las respuestas HTTP exactas (incluyendo los conflictos de horarios y la paginación).
+
+   npm run test:e2e
+
+### Plan de Archivos de Testing
+*(Basado en la arquitectura del proyecto)*
+
+**Configuración Global (carpeta `test/`):**
+1. `test/setup-e2e.ts` (Configuración de la app y BD para pruebas).
+2. `test/utils/test-helpers.ts` (Funciones reutilizables para crear datos de prueba).
+
+**Módulo de Usuarios (`src/modules/users/`):**
+3. `users.service.spec.ts`
+4. `users.controller.spec.ts`
+5. `users.e2e-spec.ts`
+
+**Módulo de Recursos (`src/modules/resources/`):**
+6. `resources.service.spec.ts`
+7. `resources.controller.spec.ts`
+8. `resources.e2e-spec.ts`
+
+**Módulo de Reservas (`src/modules/reservations/`):**
+9. `reservations.service.spec.ts`
+10. `reservations.controller.spec.ts`
+11. `reservations.e2e-spec.ts`
+12. `availability.e2e-spec.ts`
+
+---
+
+## ⚠️ Manejo de Errores y Conflictos
+
+Uno de los aspectos fundamentales del sistema es la prevención de dobles reservas. El endpoint `POST /reservations` valida los rangos de tiempo.
+
+Si un recurso ya está reservado en el rango de fechas solicitado, la API responde con un error `409 Conflict`:
+
+{
+  "message": "Resource \"[resourceId]\" is already reserved for the requested time range.",
+  "error": "Conflict",
+  "statusCode": 409
+}
+
+Este comportamiento es crucial para garantizar la integridad de los datos y ha sido validado exhaustivamente en la suite de pruebas automatizadas.
