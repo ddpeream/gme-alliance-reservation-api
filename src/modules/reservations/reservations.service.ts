@@ -116,7 +116,6 @@ export class ReservationsService {
     if (from && to) {
       // Reservas que intersectan el rango [from, to]
       where.startTime = Between(new Date(from), new Date(to));
-      // O también podríamos filtrar por endTime, dependiendo de la semántica
     } else if (from) {
       where.startTime = MoreThanOrEqual(new Date(from));
     } else if (to) {
@@ -237,14 +236,16 @@ export class ReservationsService {
     end: Date,
     excludeReservationId: string | null,
   ): Promise<boolean> {
-    // Consulta para verificar solapamiento usando el operador && (overlap)
-    // NOTA: Usamos SQL crudo porque TypeORM no soporta directamente el operador && para tstzrange
+    // Consulta para verificar solapamiento comparando directamente las fechas
+    // (Ya no depende de la columna "period", que suele ser null)
     const queryBuilder = this.reservationRepository.createQueryBuilder('r');
 
     queryBuilder
       .where('r.resourceId = :resourceId', { resourceId })
       .andWhere('r.status = :status', { status: ReservationStatus.CONFIRMED })
-      .andWhere("r.period && tstzrange(:start, :end, '[)')", { start, end });
+      // Verificación clásica de solapamiento de rangos de tiempo
+      .andWhere('r.startTime < :end', { end })
+      .andWhere('r.endTime > :start', { start });
 
     if (excludeReservationId) {
       queryBuilder.andWhere('r.id != :excludeReservationId', {
