@@ -135,7 +135,7 @@ Validan la lógica de los servicios y controladores de forma aislada, utilizando
 ### Pruebas E2E / Integración
 Validan los endpoints reales levantando la aplicación completa, conectando a una base de datos de prueba (con `synchronize: true` para crear las tablas automáticamente) y verificando las respuestas HTTP exactas (incluyendo los conflictos de horarios y la paginación).
 
-   npm run test:e2e
+   npm run test:e2e -- --runInBand
 
 ### Plan de Archivos de Testing
 *(Basado en la arquitectura del proyecto)*
